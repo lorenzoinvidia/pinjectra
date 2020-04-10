@@ -67,6 +67,54 @@ DWORD WINAPI message_loop(_In_ LPVOID lpParameter) {
 	return msg.wParam;
 }
 
+void getProtections() {
+	HANDLE p = GetCurrentProcess();
+	PROCESS_MITIGATION_DYNAMIC_CODE_POLICY policy1;
+	PROCESS_MITIGATION_CONTROL_FLOW_GUARD_POLICY policy2;
+	PROCESS_MITIGATION_STRICT_HANDLE_CHECK_POLICY policy3;
+	PROCESS_MITIGATION_EXTENSION_POINT_DISABLE_POLICY policy5;
+	PROCESS_MITIGATION_BINARY_SIGNATURE_POLICY policy6;
+	PROCESS_MITIGATION_FONT_DISABLE_POLICY policy7;
+	PROCESS_MITIGATION_IMAGE_LOAD_POLICY policy8;
+	PROCESS_MITIGATION_ASLR_POLICY policy9;
+	
+	GetProcessMitigationPolicy(p, ProcessDynamicCodePolicy, &policy1, sizeof(policy1));
+	printf("policy1.ProhibitDynamicCode = %d\n", policy1.ProhibitDynamicCode);
+
+	GetProcessMitigationPolicy(p, ProcessControlFlowGuardPolicy, &policy2, sizeof(policy2));
+	printf("policy2.EnableControlFlowGuard = %d\n", policy2.EnableControlFlowGuard);
+	printf("policy2.StrictMode = %d\n", policy2.StrictMode);
+
+	GetProcessMitigationPolicy(p, ProcessStrictHandleCheckPolicy, &policy3, sizeof(policy3));
+	printf("policy3.RaiseExceptionOnInvalidHandleReference = %d\n", policy3.RaiseExceptionOnInvalidHandleReference);
+	printf("policy3.HandleExceptionsPermanentlyEnabled  = %d\n", policy3.HandleExceptionsPermanentlyEnabled);
+
+	GetProcessMitigationPolicy(p, ProcessExtensionPointDisablePolicy, &policy5, sizeof(policy5));
+	printf("policy5.DisableExtensionPoints = %d\n", policy5.DisableExtensionPoints);
+
+	GetProcessMitigationPolicy(p, ProcessSignaturePolicy, &policy6, sizeof(policy6));
+	printf("policy6.MicrosoftSignedOnly = %d\n", policy6.MicrosoftSignedOnly);
+
+	GetProcessMitigationPolicy(p, ProcessFontDisablePolicy, &policy7, sizeof(policy7));
+	printf("policy7.DisableNonSystemFonts = %d\n", policy7.DisableNonSystemFonts);
+
+	GetProcessMitigationPolicy(p, ProcessImageLoadPolicy, &policy8, sizeof(policy8));
+	printf("policy8.NoRemoteImages = %d\n", policy8.NoRemoteImages);
+	printf("policy8.NoLowMandatoryLabelImages = %d\n", policy8.NoLowMandatoryLabelImages);
+	printf("policy8.PreferSystem32Images = %d\n", policy8.PreferSystem32Images);
+
+	GetProcessMitigationPolicy(p, ProcessImageLoadPolicy, &policy9, sizeof(policy9));
+	printf("policy9.EnableBottomUpRandomization = %d\n", policy9.EnableBottomUpRandomization);
+	printf("policy9.EnableForceRelocateImages = %d\n", policy9.EnableForceRelocateImages);
+	printf("policy9.EnableHighEntropy = %d\n", policy9.EnableHighEntropy);
+	printf("policy9.DisallowStrippedImages = %d\n", policy9.DisallowStrippedImages);
+
+	printf("\n");
+
+}//getProtections
+
+
+
 int protection_up() {
 	PROCESS_MITIGATION_DYNAMIC_CODE_POLICY policy1;
 	policy1.ProhibitDynamicCode = 1;
@@ -204,6 +252,11 @@ int main(int argc, char** argv) {
 	banner();
 
 	if (argc > 1) {
+
+		if (!strcmp(argv[1], "/GET_PROT")) {
+			printf("Getting Protections ...\n");
+			getProtections();
+		}
 		if (!strcmp(argv[1], "/PROT_UP")) {
 			printf("Process Protection Up ...\n");
 			protection_up();
@@ -213,7 +266,7 @@ int main(int argc, char** argv) {
 			protection_down();
 		}
 		if (!strcmp(argv[1], "/?")) {
-			printf("usage: %s [/PROT_UP | /PROT_DOWN]\n", argv[0]);
+			printf("usage: %s [/PROT_UP | /PROT_DOWN | /GET_PROT]\n", argv[0]);
 			return 0;
 		}
 	}
