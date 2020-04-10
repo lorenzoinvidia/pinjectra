@@ -128,16 +128,16 @@ int protection_up() {
 		return 0;
 	}
 
-	PROCESS_MITIGATION_CONTROL_FLOW_GUARD_POLICY policy2;
-	policy2.EnableControlFlowGuard = 1;
-	policy2.EnableExportSuppression = 0;  // or else we'll need GetProcAddress for every function we want to invoke...
-	policy2.StrictMode = 1;
-	policy2.ReservedFlags = 0;
+	//PROCESS_MITIGATION_CONTROL_FLOW_GUARD_POLICY policy2;
+	//policy2.EnableControlFlowGuard = 1;
+	//policy2.EnableExportSuppression = 0;  // or else we'll need GetProcAddress for every function we want to invoke...
+	//policy2.StrictMode = 1;
+	//policy2.ReservedFlags = 0;
 
-	if (!SetProcessMitigationPolicy(ProcessControlFlowGuardPolicy, &policy2, sizeof(policy2))) {
-		printf("Policy PROCESS_MITIGATION_CONTROL_FLOW_GUARD_POLICY change error: 0x%08x\n", GetLastError());
-		return 0;
-	}
+	//if (!SetProcessMitigationPolicy(ProcessControlFlowGuardPolicy, &policy2, sizeof(policy2))) {
+	//	printf("Policy PROCESS_MITIGATION_CONTROL_FLOW_GUARD_POLICY change error: 0x%08x\n", GetLastError());
+	//	return 0;
+	//}
 
 	PROCESS_MITIGATION_STRICT_HANDLE_CHECK_POLICY policy3;
 	policy3.RaiseExceptionOnInvalidHandleReference = 1;
